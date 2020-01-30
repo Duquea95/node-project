@@ -1,13 +1,25 @@
 extends layout
 
 block layout-content
-  div.View
-    h1.Banner WHATABYTE
-    div.Message
-      div.Title
-        h3 Making the Best
-        h1 Food For Devs
-      span.Details Access the WHATABYTE Team Portal
-    div.NavButtons
-      a(href="/user")
-          div.NavButton Just dive in!
+    div.View.WelcomeView
+        h1.Banner Test App
+        div.NavButtons
+            if isAuthenticated
+                a(href="/user")
+                    div.NavButton Just dive in!
+            else
+                a(href="/login")
+                    div.NavButton Log in
+        div.Message
+            div.Title
+                h3 Title here
+                h1 Main Title
+            span.Details Search for user
+        div.freeChamps(class="COTWGrid")
+
+            if ids != null
+                each id in ids
+                    div.champion(class="champCard")
+                        a(href="/champion/"+id.name)
+                            img(class="champImg", alt=id.name)
+                            p= id.name
