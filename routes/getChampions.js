@@ -1,18 +1,16 @@
 const express = require("express");
 const getChampions = express.Router();
 const axios = require("axios");
-const events = require("events");
-const eventEmitter = new events.EventEmitter();
 
 const lolUrl = "https://na1.api.riotgames.com/"
 const ddragon = "http://ddragon.leagueoflegends.com/cdn/10.2.1/data/en_US/champion.json"
 const squareImgUrl = "http://ddragon.leagueoflegends.com/cdn/10.2.1/img/champion/"
 require("dotenv").config();
 
-const champRouter = require("./champion");
+// const champRouter = require("./champion");
 
 const LolApiCall = async () => {
-    console.log("Get them!");
+    console.log("Get weekly champions!");
     const query = await axios.get(lolUrl + "lol/platform/v3/champion-rotations", { headers: { "X-Riot-Token": process.env.LOL_API_KEY } });
     const dd = await axios.get(ddragon);
 
@@ -33,13 +31,17 @@ const LolApiCall = async () => {
                         if (dd.data.data[x]["id"] == "MonkeyKing") {
                             showChamp[index] = {
                                 name: dd.data.data[x]["name"],
-                                id: item, sqImg: squareAssetLink
+                                id: item,
+                                sqImg: squareAssetLink,
+                                attack: dd.data.data[x]["info"]["attack"]
                             }
                         }
                         else {
                             showChamp[index] = {
                                 name: dd.data.data[x]["id"],
-                                id: item, sqImg: squareAssetLink
+                                id: item,
+                                sqImg: squareAssetLink,
+                                attack: dd.data.data[x]["info"]["attack"]
                             }
                         }
 
@@ -52,11 +54,7 @@ const LolApiCall = async () => {
     return showChamp;
 }
 
-const getWeeklyChamps = async () => {
-
-};
-
-getChampions.use("/", champRouter);
+// getChampions.use("/", champRouter);
 
 getChampions.get("/", async (req, res) => {
     let showChamp = []
@@ -68,7 +66,7 @@ getChampions.get("/", async (req, res) => {
     res.render("index", { ids: showChamp });
 })
 
-getChampions.get("/champion/:champion", async (req, res, next) => {
+getChampions.get("/champion", (req, res) => {
     console.log("WE are getting champ info");
 });
 

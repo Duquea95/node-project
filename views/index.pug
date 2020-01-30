@@ -20,6 +20,6 @@ block layout-content
             if ids != null
                 each id in ids
                     div.champion(class="champCard")
-                        a(href="/champion/"+id.name)
-                            img(class="champImg", alt=id.name)
+                        a(href="/champion")
+                            img(class="champImg", src=id.sqImg , alt=id.name)
                             p= id.name
