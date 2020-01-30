@@ -1,7 +1,11 @@
 const express = require("express");
 const champions = express.Router();
 
-// app = express();
+const getChampionsRouter = require("./getChampions");
+
+champions.use('/', (req, res, next) => {
+    next();
+});
 
 champions.param("champion", (req, res, next, value) => {
     console.log(value);

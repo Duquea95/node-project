@@ -12,8 +12,9 @@ const squareImgUrl = "http://ddragon.leagueoflegends.com/cdn/10.2.1/img/champion
 
 require("dotenv").config();
 
-const authRouter = require("./auth");
-const champRouter = require("./champion");
+const authRouter = require("./routes/auth");
+const getChampionsRouter = require("./routes/getChampions");
+const champRouter = require("./routes/champion");
 
 // App Variables
 const app = express();
@@ -73,6 +74,7 @@ app.use((req, res, next) => {
 // Routing
 app.use("/", authRouter);
 app.use("/", champRouter);
+app.use("/", getChampionsRouter);
 
 const secured = (req, res, next) => {
     if (req.user) {
@@ -87,38 +89,8 @@ app.get("/user", secured, (req, res, next) => {
     res.render("user", { title: "Profile", userProfile: userProfile })
 });
 
-app.get("/", async (req, res) => {
-    const query = await axios.get(lolUrl + "lol/platform/v3/champion-rotations", { headers: { "X-Riot-Token": process.env.LOL_API_KEY } });
-    const dd = await axios.get(ddragon);
-
-    const champId = query.data.freeChampionIds;
-    console.log(champId);
-
-    let showChamp = []
-
-    for (x in dd.data.data) {
-        // console.log(x + " " + dd.data.data[x]);
-        for (y in dd.data.data[x]) {
-            if (y == "key") {
-                var temp = dd.data.data[x][y];
-                // console.log(temp);
-
-                champId.forEach(function (item, index) {
-                    if (item == temp) {
-                        var squareAssetLink = squareImgUrl + dd.data.data[x]["id"] + ".png";
-                        if (dd.data.data[x]["id"] == "MonkeyKing") {
-                            showChamp[index] = { name: dd.data.data[x]["name"], id: item, sqImg: squareAssetLink }
-                        }
-                        else { showChamp[index] = { name: dd.data.data[x]["id"], id: item, sqImg: squareAssetLink } }
-                    }
-                });
-            }
-
-        }
-    }
-
-    console.log(showChamp);
-    res.render("index", { ids: showChamp });
+app.get("/", (req, res) => {
+    res.render("index");
 })
 
 app.get("/logout", (req, res) => {
